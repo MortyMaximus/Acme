@@ -3,7 +3,7 @@ using Acme.Repository.Models;
 
 namespace Acme.Repository.Repository
 {
-    internal class UserRepository : IGenericCrudRepository<UserModel>
+    internal class UserRepository : IUserRepository
     {
         private readonly AcmeContext context;
 
@@ -12,7 +12,7 @@ namespace Acme.Repository.Repository
             this.context = context;
         }
 
-        async Task IGenericCrudRepository<UserModel>.CreateAsync(UserModel model)
+        public async Task CreateAsync(UserModel model)
         {
             if (model is null)
             {
@@ -25,7 +25,7 @@ namespace Acme.Repository.Repository
             }
         }
 
-        async Task<IEnumerable<UserModel>> IGenericCrudRepository<UserModel>.ReadAsync(int id)
+        public async Task<IEnumerable<UserModel>> ReadAsync(int id)
         {
             var result = context.Users.Where(m => m.Id == id);
 
@@ -39,14 +39,14 @@ namespace Acme.Repository.Repository
             }
         }
 
-        Task<IEnumerable<UserModel>> IGenericCrudRepository<UserModel>.ReadAsync()
+        public Task<IEnumerable<UserModel>> ReadAsync()
         {
             var result = context.Users.Select(m => m.ToModel());
 
             return Task.FromResult(result.AsEnumerable());
         }
 
-        Task IGenericCrudRepository<UserModel>.UpdateAsync(UserModel model)
+        public Task UpdateAsync(UserModel model)
         {
             throw new NotImplementedException();
         }

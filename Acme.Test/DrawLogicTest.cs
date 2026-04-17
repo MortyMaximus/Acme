@@ -14,7 +14,7 @@ namespace Acme.Test
         private Mock<IRepositoryFacade> _repositoryFacade = default!;
         private Mock<ISerialNumberRepository> _serialNumberRepository = default!;
         private Mock<ICustomerRepository> _customerRepository = default!;
-        private Mock<IGenericCrudRepository<UserModel>> _userRepository = default!;
+        private Mock<IUserRepository> _userRepository = default!;
 
         [SetUp]
         public void TestSetup()
@@ -22,7 +22,7 @@ namespace Acme.Test
             _repositoryFacade = new Mock<IRepositoryFacade>();
             _serialNumberRepository = new Mock<ISerialNumberRepository>();
             _customerRepository = new Mock<ICustomerRepository>();
-            _userRepository = new Mock<IGenericCrudRepository<UserModel>>();
+            _userRepository = new Mock<IUserRepository>();
 
             _repositoryFacade.Setup(x => x.UserRepository()).Returns(_userRepository.Object);
             _repositoryFacade.Setup(x => x.SerialNumberRepository()).Returns(_serialNumberRepository.Object);

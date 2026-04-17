@@ -1,5 +1,4 @@
-﻿using Acme.Models.BaseModels;
-using Acme.Repository.Models;
+﻿using Acme.Repository.Models;
 using Acme.Repository.Repository;
 
 namespace Acme.Repository
@@ -19,7 +18,7 @@ namespace Acme.Repository
         ISerialNumberRepository IRepositoryFacade.SerialNumberRepository() => 
             new SerialNumberRepository(context);
 
-        IGenericCrudRepository<Acme.Models.Database.UserModel> IRepositoryFacade.UserRepository() => 
+        IUserRepository IRepositoryFacade.UserRepository() => 
             new UserRepository(context);
     }
 }

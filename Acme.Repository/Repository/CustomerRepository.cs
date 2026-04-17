@@ -25,7 +25,7 @@ namespace Acme.Repository.Repository
             }
         }
 
-        async Task IGenericCrudRepository<CustomerModel>.CreateAsync(CustomerModel model)
+        public async Task CreateAsync(CustomerModel model)
         {
             if (model is null)
             {
@@ -36,32 +36,6 @@ namespace Acme.Repository.Repository
                 await context.AddAsync(model.ToDbModel());
                 await context.SaveChangesAsync();
             }
-        }
-
-        async Task<IEnumerable<CustomerModel>> IGenericCrudRepository<CustomerModel>.ReadAsync(int id)
-        {
-            var result = context.Customers.Where(m => m.Id == id);
-
-            if (result is null)
-            {
-                return Enumerable.Empty<CustomerModel>();
-            }
-            else
-            {
-                return result.Select(m => m.ToModel()).ToList();
-            }
-        }
-
-        Task<IEnumerable<CustomerModel>> IGenericCrudRepository<CustomerModel>.ReadAsync()
-        {
-            var result = context.Customers.Select(m => m.ToModel());
-
-            return Task.FromResult(result.AsEnumerable());
-        }
-
-        Task IGenericCrudRepository<CustomerModel>.UpdateAsync(CustomerModel model)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Acme.Repository.Repository
 {
-    internal class SerialNumberRepository : ISerialNumberRepository
+    public class SerialNumberRepository : ISerialNumberRepository
     {
         private readonly AcmeContext _context;
 
@@ -45,20 +45,7 @@ namespace Acme.Repository.Repository
             };
         }
 
-        async Task IGenericCrudRepository<SerialNumberModel>.CreateAsync(SerialNumberModel model)
-        {
-            if (model is null)
-            {
-                throw new NullReferenceException("Cannot create a serial number from nothing.");
-            }
-            else
-            {
-                await _context.AddAsync(model.ToDbModel());
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        async Task<IEnumerable<SerialNumberModel>> IGenericCrudRepository<SerialNumberModel>.ReadAsync(int id)
+        public async Task<IEnumerable<SerialNumberModel>> ReadAsync(int id)
         {
             var result = _context.SerialNumbers.Where(m => m.Id == id);
 
@@ -72,14 +59,14 @@ namespace Acme.Repository.Repository
             }
         }
 
-        Task<IEnumerable<SerialNumberModel>> IGenericCrudRepository<SerialNumberModel>.ReadAsync()
+        public Task<IEnumerable<SerialNumberModel>> ReadAsync()
         {
             var result = _context.SerialNumbers.Select(m => m.ToModel());
 
             return Task.FromResult(result.AsEnumerable());
         }
 
-        Task IGenericCrudRepository<SerialNumberModel>.UpdateAsync(SerialNumberModel model)
+        public Task UpdateAsync(SerialNumberModel model)
         {
             if (model.FirstCustomer == null && model.SecondCustomer == null)
                 throw new Exception("At least one customer must be provided to update a serial number.");

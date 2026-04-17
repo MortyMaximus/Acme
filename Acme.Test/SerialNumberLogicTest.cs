@@ -3,9 +3,7 @@ using Acme.Repository;
 using NUnit.Framework;
 using Moq;
 using Acme.Repository.Repository;
-using Acme.Models.Database;
 using Acme.Models.BaseModels;
-using Acme.Models;
 
 namespace Acme.Test
 {
@@ -13,8 +11,6 @@ namespace Acme.Test
     {
         private Mock<IRepositoryFacade> _repositoryFacade = default!;
         private Mock<ISerialNumberRepository> _serialNumberRepository = default!;
-        private Mock<ICustomerRepository> _customerRepository = default!;
-        private Mock<IGenericCrudRepository<UserModel>> _userRepository = default!;
 
 
         [SetUp]
@@ -22,12 +18,8 @@ namespace Acme.Test
         {
             _repositoryFacade = new Mock<IRepositoryFacade>();
             _serialNumberRepository = new Mock<ISerialNumberRepository>();
-            _customerRepository = new Mock<ICustomerRepository>();
-            _userRepository = new Mock<IGenericCrudRepository<UserModel>>();
 
-            _repositoryFacade.Setup(x => x.UserRepository()).Returns(_userRepository.Object);
             _repositoryFacade.Setup(x => x.SerialNumberRepository()).Returns(_serialNumberRepository.Object);
-            _repositoryFacade.Setup(x => x.CustomerRepository()).Returns(_customerRepository.Object);
         }
 
         [Test]
