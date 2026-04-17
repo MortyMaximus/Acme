@@ -1,0 +1,57 @@
+﻿@page "/competition"
+@using Acme.Models
+@inject IHttpClientFactory HttpClientFactory
+@rendermode InteractiveServer
+
+
+<PageTitle>Competition</PageTitle>
+
+<h1>Competition</h1>
+<span>Here you can entre your product serial number to enter the competition for a prize!</span>
+<br />
+@if (errorMessage != null)
+{
+    <p class="alert alert-danger mt-2">@errorMessage</p>
+}
+@if (successMessage != null)
+{
+    <p class="alert alert-success mt-2">@successMessage</p>
+}
+
+<EditForm Model="@drawModel" OnValidSubmit="@HandleSubmit" FormName="submit-serial-number">
+    <div class="col-4">
+        <DataAnnotationsValidator />
+        <FormItemComponent ExpressionModel="@(() => drawModel.Email)" />
+        <FormItemComponent ExpressionModel="@(() => drawModel.FirstName)" />
+        <FormItemComponent ExpressionModel="@(() => drawModel.LastName)" />
+        <FormItemComponent ExpressionModel="@(() => drawModel.SerialNumber)" />
+        <input class="btn btn-primary mb-3" style="float:right;" type="submit" value="Confirm" />
+    </div>
+</EditForm>
+
+@code {
+    private DrawModel drawModel { get; set; } = new() { Email = "", SerialNumber = "" };
+    private HttpClient _httpClient;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override void OnInitialized()
+    {
+        _httpClient = HttpClientFactory.CreateClient("api");
+    }
+
+    private async Task HandleSubmit()
+    {
+        var responseMessage = await _httpClient.PostAsJsonAsync("Draw/AddSerialNumber", drawModel);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            errorMessage = $"Something went wrong: {(int)responseMessage.StatusCode} {responseMessage.StatusCode}";
+            successMessage = null;
+            return;
+        }
+        drawModel = new() { Email = "", SerialNumber = "" };
+        successMessage = "Serial number submitted successfully :)";
+        errorMessage = null;
+    }
+}

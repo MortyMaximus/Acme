@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Acme.Logic/Acme.Logic.csproj" Id="84d4c739-74d3-4822-802e-df4ee43f73a1" />
+  <Project Path="Acme.Models/Acme.Models.csproj" Id="5b688507-cd7a-47dd-aef3-b2dcca80a0d0" />
+  <Project Path="Acme.Repository/Acme.Repository.csproj" Id="0de1c8d5-9195-41b2-b2b9-2c6bb26942a6" />
+  <Project Path="Acme.Test/Acme.Test.csproj" Id="093c7d75-a262-439f-9cc5-d9659334cf53" />
+  <Project Path="Acme.Web/Acme.Web.csproj" Id="dbfc34d1-0c14-445e-9e08-e5d9270099ef" />
+</Solution>

@@ -1,0 +1,43 @@
+@using System.Linq.Expressions;
+@using System.ComponentModel.DataAnnotations;
+@using System.Reflection;
+@using System.ComponentModel
+
+<div class="row mb-5">
+    <div class="col-3">
+        <label class="form-label">@Name</label>
+    </div>
+    <div class="col-6 offset-3">
+        <InputText class="form-control" @bind-Value="Value" name="@Name" />
+        <ValidationMessage style="position:absolute;" For="ExpressionModel" />
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Expression<Func<string>> ExpressionModel { get; set; }
+
+    private string Name => GetDisplayName();
+    private string Value
+    {
+        get => ExpressionModel.Compile().Invoke();
+        set
+        {
+            var member = (ExpressionModel.Body as MemberExpression).Member as PropertyInfo;
+            member.SetValue(((MemberExpression)ExpressionModel.Body).Expression switch
+            {
+                ConstantExpression constant => constant.Value,
+                MemberExpression memberExpr => ((PropertyInfo)memberExpr.Member).GetValue(((ConstantExpression)memberExpr.Expression).Value),
+                _ => throw new InvalidOperationException("Unsupported expression type")
+            }, value);
+        }
+    }
+
+    private string GetDisplayName()
+    {
+        var member = (ExpressionModel.Body as MemberExpression).Member;
+        return member.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? member.Name;
+    }
+
+}

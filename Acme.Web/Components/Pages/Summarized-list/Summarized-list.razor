@@ -1,0 +1,71 @@
+﻿@page "/Summarized-list"
+@using Acme.Models
+@inject IHttpClientFactory HttpClientFactory
+@rendermode InteractiveServer
+
+<PageTitle>Summarized list</PageTitle>
+
+<h1>Summarized-list</h1>
+<span>Here is a list over every submitted form.</span>
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">
+                <label onclick="@(() => Order(nameof(DrawModel.Email)))" style="cursor:pointer">E-mail</label>
+            </th>
+            <th scope="col">
+                <label onclick="@(() => Order(nameof(DrawModel.FirstName)))" style="cursor:pointer">First name</label>
+            </th>
+            <th scope="col">
+                <label onclick="@(() => Order(nameof(DrawModel.LastName)))" style="cursor:pointer">Last name</label>
+            </th>
+            <th scope="col">
+                <label onclick="@(() => Order(nameof(DrawModel.SerialNumber)))" style="cursor:pointer">Serial number</label>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (drawModels != null)
+            foreach (var Models in drawModels)
+            {
+                <tr>
+                    <td>@Models.Email</td>
+                    <td>@Models.FirstName</td>
+                    <td>@Models.LastName</td>
+                    <td>@Models.SerialNumber</td>
+                </tr>
+            }
+    </tbody>
+</table>
+
+@code {
+    private List<DrawModel> drawModels { get; set; } = new List<DrawModel>();
+    private HttpClient _httpClient;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpClient = HttpClientFactory.CreateClient("api");
+        drawModels = await _httpClient.GetFromJsonAsync<List<DrawModel>>("draw/GetAll") ?? new List<DrawModel>();
+    }
+
+    private void Order(string propertyName)
+    {
+        switch (propertyName)
+        {
+            case nameof(DrawModel.Email):
+                drawModels = drawModels.OrderBy(m => m.Email).ToList();
+                break;
+            case nameof(DrawModel.FirstName):
+                drawModels = drawModels.OrderBy(m => m.FirstName).ToList();
+                break;
+            case nameof(DrawModel.LastName):
+                drawModels = drawModels.OrderBy(m => m.LastName).ToList();
+                break;
+            case nameof(DrawModel.SerialNumber):
+                drawModels = drawModels.OrderBy(m => m.SerialNumber).ToList();
+                break;
+        }
+    }
+}
