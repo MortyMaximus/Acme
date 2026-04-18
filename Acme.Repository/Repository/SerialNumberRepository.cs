@@ -1,8 +1,9 @@
 ﻿using Acme.Models;
 using Acme.Models.BaseModels;
+using Acme.Repository.Extension;
 using Acme.Repository.Models;
+using Acme.Repository.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
 namespace Acme.Repository.Repository
 {
@@ -15,35 +16,34 @@ namespace Acme.Repository.Repository
             _context = context;
         }
 
-        public Task<IEnumerable<DrawModel>> GetDrawModel()
+        public async Task<Pagination<DrawModel>> GetDrawModel(int pageSize, int pageIndex)
         {
-            var result = _context.SerialNumbers
+            var query1 = _context.SerialNumbers
                 .Where(s => s.Customer1Navigation != null)
-                .Select(c => ToDrawModel(c.Customer1Navigation, c.SerialNumber))
-                .ToList();
+                .Select(s => new DrawModel
+                {
+                    Email = s.Customer1Navigation.Email,
+                    FirstName = s.Customer1Navigation.FirstName,
+                    LastName = s.Customer1Navigation.LastName,
+                    SerialNumber = s.SerialNumber
+                });
 
-            result
-                .AddRange(_context.SerialNumbers
+            var query2 = _context.SerialNumbers
                 .Where(s => s.Customer2Navigation != null)
-                .Select(c => ToDrawModel(c.Customer2Navigation, c.SerialNumber)));
+                .Select(s => new DrawModel
+                {
+                    Email = s.Customer2Navigation.Email,
+                    FirstName = s.Customer2Navigation.FirstName,
+                    LastName = s.Customer2Navigation.LastName,
+                    SerialNumber = s.SerialNumber
+                });
 
-            return Task.FromResult(result.AsEnumerable());
+            var query = query1.Concat(query2);
+
+            return await query.ToPaginationAsync(pageSize, pageIndex);
         }
 
-        private static DrawModel ToDrawModel(Customer? customer, string serialNumber)
-        {
-            if (customer is null)
-            {
-                throw new Exception("Cannot create a draw model without a customer.");
-            }
-            return new DrawModel
-            {
-                Email = customer.Email,
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
-                SerialNumber = serialNumber
-            };
-        }
+        private static DrawModel ToDrawModel(SerialNumbers SerialNumber, Customer customer1Navigation) => new() { Email = customer1Navigation.Email, FirstName = customer1Navigation.FirstName, LastName = customer1Navigation.LastName, SerialNumber = SerialNumber.SerialNumber };
 
         public async Task<IEnumerable<SerialNumberModel>> ReadAsync(int id)
         {

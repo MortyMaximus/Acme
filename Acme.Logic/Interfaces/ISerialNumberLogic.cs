@@ -1,4 +1,4 @@
-﻿namespace Acme.Logic
+﻿namespace Acme.Logic.Interfaces
 {
     public interface ISerialNumberLogic
     {

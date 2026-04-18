@@ -1,4 +1,4 @@
-﻿using Acme.Repository.Repository;
+﻿using Acme.Repository.Repository.Interfaces;
 
 namespace Acme.Repository
 {

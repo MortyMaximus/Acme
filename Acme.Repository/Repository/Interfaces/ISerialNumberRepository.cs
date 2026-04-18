@@ -1,7 +1,7 @@
 ﻿using Acme.Models;
 using Acme.Models.BaseModels;
 
-namespace Acme.Repository.Repository
+namespace Acme.Repository.Repository.Interfaces
 {
     public interface ISerialNumberRepository
     {
@@ -15,7 +15,7 @@ namespace Acme.Repository.Repository
         /// Get a list of DrawModel for each serial number that has an user attached to it. This is used for the draw.
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<DrawModel>> GetDrawModel();
+        Task<Pagination<DrawModel>> GetDrawModel(int pageSize, int pageIndex);
 
         /// <summary>
         /// Get a full list of SerialNumberModel.

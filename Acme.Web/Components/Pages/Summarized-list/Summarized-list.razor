@@ -27,8 +27,8 @@
         </tr>
     </thead>
     <tbody>
-        @if (drawModels != null)
-            foreach (var Models in drawModels)
+        @if (PageData != null)
+            foreach (var Models in Items)
             {
                 <tr>
                     <td>@Models.Email</td>
@@ -39,15 +39,50 @@
             }
     </tbody>
 </table>
+@if (PageData != null)
+{
+    <div class="d-flex justify-content-between">
+        <button class="btn btn-primary" @onclick="PrevPage" disabled="@(!PageData.HasPreviousPage)">Previous</button>
+        <span>Page @PageData.PageIndex of @PageData.PageCount</span>
+        <button class="btn btn-primary" @onclick="NextPage" disabled="@(!PageData.HasNextPage)">Next</button>
+    </div>
+}
 
 @code {
-    private List<DrawModel> drawModels { get; set; } = new List<DrawModel>();
+    public Pagination<DrawModel> PageData { get; set; } = new Pagination<DrawModel>();
+    int PageIndex { get; set; } = 1;
+    int PageSize { get; set; } = 10;
+
+    private List<DrawModel> Items { get; set; } = new List<DrawModel>();
     private HttpClient _httpClient;
 
     protected override async Task OnInitializedAsync()
     {
         _httpClient = HttpClientFactory.CreateClient("api");
-        drawModels = await _httpClient.GetFromJsonAsync<List<DrawModel>>("draw/GetAll") ?? new List<DrawModel>();
+        await LoadPageAsync();
+    }
+
+    private async Task LoadPageAsync()
+    {
+        PageData = await _httpClient.GetFromJsonAsync<Pagination<DrawModel>>($"draw/GetAll?pageSize={PageSize}&pageIndex={PageIndex}") ?? new Pagination<DrawModel>();
+        Items = PageData?.Items?.ToList() ?? new List<DrawModel>();
+    }
+
+    private async Task PrevPage()
+    {
+        if (PageData.HasPreviousPage)
+        {
+            PageIndex--;
+            await LoadPageAsync();
+        }
+    }
+    private async Task NextPage()
+    {
+        if (PageData.HasNextPage)
+        {
+            PageIndex++;
+            await LoadPageAsync();
+        }
     }
 
     private void Order(string propertyName)
@@ -55,16 +90,16 @@
         switch (propertyName)
         {
             case nameof(DrawModel.Email):
-                drawModels = drawModels.OrderBy(m => m.Email).ToList();
+                Items = Items.OrderBy(m => m.Email).ToList();
                 break;
             case nameof(DrawModel.FirstName):
-                drawModels = drawModels.OrderBy(m => m.FirstName).ToList();
+                Items = Items.OrderBy(m => m.FirstName).ToList();
                 break;
             case nameof(DrawModel.LastName):
-                drawModels = drawModels.OrderBy(m => m.LastName).ToList();
+                Items = Items.OrderBy(m => m.LastName).ToList();
                 break;
             case nameof(DrawModel.SerialNumber):
-                drawModels = drawModels.OrderBy(m => m.SerialNumber).ToList();
+                Items = Items.OrderBy(m => m.SerialNumber).ToList();
                 break;
         }
     }

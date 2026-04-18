@@ -1,4 +1,5 @@
-﻿using Acme.Models;
+﻿using Acme.Logic.Interfaces;
+using Acme.Models;
 using Acme.Models.BaseModels;
 using Acme.Repository;
 
@@ -13,11 +14,12 @@ namespace Acme.Logic
             _repository = repository;
         }
 
-        public async Task<IEnumerable<DrawModel>> GetAllAsync()
+        public async Task<Pagination<DrawModel>> GetAllAsync(int pageSize, int pageIndex)
         {
             try
             {
-                return await _repository.SerialNumberRepository().GetDrawModel();
+                var pagination = await _repository.SerialNumberRepository().GetDrawModel(pageSize, pageIndex);
+                return pagination;
             }
             catch (Exception ex)
             {

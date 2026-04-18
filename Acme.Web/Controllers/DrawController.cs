@@ -1,4 +1,4 @@
-﻿using Acme.Logic;
+﻿using Acme.Logic.Interfaces;
 using Acme.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +20,11 @@ namespace Acme.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("GetAll")]
-        public ActionResult GetAll()
+        public ActionResult GetAll(int pageSize, int pageIndex)
         {
-            var drawModels = _drawLogic.GetAllAsync().Result;
+            var drawModels = _drawLogic.GetAllAsync(pageSize, pageIndex).Result;
 
-            return Ok(drawModels.ToList());
+            return Ok(drawModels);
         }
 
         /// <summary>

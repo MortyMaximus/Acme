@@ -1,5 +1,6 @@
 ﻿using Acme.Models.BaseModels;
 using Acme.Repository.Models;
+using Acme.Repository.Repository.Interfaces;
 
 namespace Acme.Repository.Repository
 {

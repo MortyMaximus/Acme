@@ -1,6 +1,6 @@
 ﻿using Acme.Models;
 
-namespace Acme.Logic
+namespace Acme.Logic.Interfaces
 {
     public interface IDrawLogic
     {
@@ -9,7 +9,7 @@ namespace Acme.Logic
         /// </summary>
         /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of all
         /// draw records. The collection will be empty if no records are found.</returns>
-        Task<IEnumerable<DrawModel>> GetAllAsync();
+        Task<Pagination<DrawModel>> GetAllAsync(int pageSize, int pageIndex);
 
         /// <summary>
         /// Adds the specified draw model to the serial number collection.

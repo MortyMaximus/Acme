@@ -2,8 +2,8 @@
 using Acme.Repository;
 using NUnit.Framework;
 using Moq;
-using Acme.Repository.Repository;
 using Acme.Models.BaseModels;
+using Acme.Repository.Repository.Interfaces;
 
 namespace Acme.Test
 {

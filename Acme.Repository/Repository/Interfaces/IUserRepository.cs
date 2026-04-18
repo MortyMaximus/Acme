@@ -1,6 +1,6 @@
 ﻿using Acme.Models.Database;
 
-namespace Acme.Repository.Repository
+namespace Acme.Repository.Repository.Interfaces
 {
     public interface IUserRepository
     {

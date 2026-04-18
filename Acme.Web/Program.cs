@@ -1,4 +1,5 @@
 using Acme.Logic;
+using Acme.Logic.Interfaces;
 using Acme.Repository;
 using Acme.Repository.Models;
 using Acme.Web.Components;

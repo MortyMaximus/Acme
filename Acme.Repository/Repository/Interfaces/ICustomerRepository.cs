@@ -1,7 +1,7 @@
 ﻿using Acme.Models.BaseModels;
 using Acme.Repository.Repository;
 
-namespace Acme.Repository
+namespace Acme.Repository.Repository.Interfaces
 {
     public interface ICustomerRepository
     {

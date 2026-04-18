@@ -2,10 +2,9 @@
 using Acme.Repository;
 using NUnit.Framework;
 using Moq;
-using Acme.Repository.Repository;
-using Acme.Models.Database;
 using Acme.Models.BaseModels;
 using Acme.Models;
+using Acme.Repository.Repository.Interfaces;
 
 namespace Acme.Test
 {
@@ -14,7 +13,6 @@ namespace Acme.Test
         private Mock<IRepositoryFacade> _repositoryFacade = default!;
         private Mock<ISerialNumberRepository> _serialNumberRepository = default!;
         private Mock<ICustomerRepository> _customerRepository = default!;
-        private Mock<IUserRepository> _userRepository = default!;
 
         [SetUp]
         public void TestSetup()
@@ -22,9 +20,7 @@ namespace Acme.Test
             _repositoryFacade = new Mock<IRepositoryFacade>();
             _serialNumberRepository = new Mock<ISerialNumberRepository>();
             _customerRepository = new Mock<ICustomerRepository>();
-            _userRepository = new Mock<IUserRepository>();
 
-            _repositoryFacade.Setup(x => x.UserRepository()).Returns(_userRepository.Object);
             _repositoryFacade.Setup(x => x.SerialNumberRepository()).Returns(_serialNumberRepository.Object);
             _repositoryFacade.Setup(x => x.CustomerRepository()).Returns(_customerRepository.Object);
         }
@@ -33,73 +29,77 @@ namespace Acme.Test
         public void DrawLogic_read_Expected_1()
         {
             //Arrange
-            _serialNumberRepository.Setup(x => x.GetDrawModel()).ReturnsAsync(new List<DrawModel>
+            _serialNumberRepository.Setup(x => x.GetDrawModel(1, 10)).ReturnsAsync(new Pagination<DrawModel>
             {
-                new() {
-                    Email = "Jon@doe.com",
-                    FirstName = "jon",
-                    LastName = "Doe",
-                    SerialNumber = "fef5d5af-6cc4-4ccc-bc68-c97443a909d5"
+                Items = new List<DrawModel> {
+                    new DrawModel {
+                        Email = "Jon@doe.com",
+                        FirstName = "jon",
+                        LastName = "Doe",
+                        SerialNumber = "fef5d5af-6cc4-4ccc-bc68-c97443a909d5"
+                    }
                 }
             });
 
             //Act
-            var result = new DrawLogic(_repositoryFacade.Object).GetAllAsync().Result;
+            var result = new DrawLogic(_repositoryFacade.Object).GetAllAsync(1, 10).Result;
 
             //Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count(), Is.EqualTo(1));
-            Assert.That(result.First().Email, Is.EqualTo("Jon@doe.com"));
-            Assert.That(result.First().FirstName, Is.EqualTo("jon"));
-            Assert.That(result.First().LastName, Is.EqualTo("Doe"));
-            Assert.That(result.First().SerialNumber, Is.EqualTo("fef5d5af-6cc4-4ccc-bc68-c97443a909d5"));
+            Assert.That(result.Items.Count(), Is.EqualTo(1));
+            Assert.That(result.Items.First().Email, Is.EqualTo("Jon@doe.com"));
+            Assert.That(result.Items.First().FirstName, Is.EqualTo("jon"));
+            Assert.That(result.Items.First().LastName, Is.EqualTo("Doe"));
+            Assert.That(result.Items.First().SerialNumber, Is.EqualTo("fef5d5af-6cc4-4ccc-bc68-c97443a909d5"));
         }
 
         [Test]
         public void DrawLogic_read_Expected_2()
         {
             //Arrange
-            _serialNumberRepository.Setup(x => x.GetDrawModel()).ReturnsAsync(new List<DrawModel>
+            _serialNumberRepository.Setup(x => x.GetDrawModel(1, 10)).ReturnsAsync(new Pagination<DrawModel>
             {
-                new() {
-                    Email = "Jon@doe.com",
-                    FirstName = "jon",
-                    LastName = "Doe",
-                    SerialNumber = "fef5d5af-6cc4-4ccc-bc68-c97443a909d5"
-                },
-                new() {
-                    Email = "Jon@doe.com",
-                    FirstName = "jan",
-                    LastName = "Doe",
-                    SerialNumber =   "2ee43e57-f532-4b98-85a4-0c9c17f97d38"
+                Items = new List<DrawModel> {
+                    new() {
+                        Email = "Jon@doe.com",
+                        FirstName = "jon",
+                        LastName = "Doe",
+                        SerialNumber = "fef5d5af-6cc4-4ccc-bc68-c97443a909d5"
+                    },
+                    new() {
+                        Email = "Jon@doe.com",
+                        FirstName = "jan",
+                        LastName = "Doe",
+                        SerialNumber =   "2ee43e57-f532-4b98-85a4-0c9c17f97d38"
+                    }
                 }
             });
 
             //Act
-            var result = new DrawLogic(_repositoryFacade.Object).GetAllAsync().Result;
+            var result = new DrawLogic(_repositoryFacade.Object).GetAllAsync(1, 10).Result;
 
             //Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count(), Is.EqualTo(2));
-            Assert.That(result.First().Email, Is.EqualTo("Jon@doe.com"));
-            Assert.That(result.Last().FirstName, Is.EqualTo("jan"));
-            Assert.That(result.First().LastName, Is.EqualTo("Doe"));
-            Assert.That(result.Last().SerialNumber, Is.EqualTo("2ee43e57-f532-4b98-85a4-0c9c17f97d38"));
+            Assert.That(result.Items.Count(), Is.EqualTo(2));
+            Assert.That(result.Items.First().Email, Is.EqualTo("Jon@doe.com"));
+            Assert.That(result.Items.Last().FirstName, Is.EqualTo("jan"));
+            Assert.That(result.Items.First().LastName, Is.EqualTo("Doe"));
+            Assert.That(result.Items.Last().SerialNumber, Is.EqualTo("2ee43e57-f532-4b98-85a4-0c9c17f97d38"));
         }
 
         [Test]
         public void DrawLogic_read_Expected_empty()
         {
             //Arrange
-            _serialNumberRepository.Setup(x => x.GetDrawModel()).ReturnsAsync(new List<DrawModel>());
+            _serialNumberRepository.Setup(x => x.GetDrawModel(1, 10)).ReturnsAsync(new Pagination<DrawModel> { Items = [] });
 
             //Act
-            var result = new DrawLogic(_repositoryFacade.Object).GetAllAsync().Result;
+            var result = new DrawLogic(_repositoryFacade.Object).GetAllAsync(1, 10).Result;
 
             //Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count(), Is.EqualTo(0));
-            Assert.That(result, Is.Empty);
+            Assert.That(result.Items.Count(), Is.EqualTo(0));
+            Assert.That(result.Items, Is.Empty);
         }
 
         [Test]
