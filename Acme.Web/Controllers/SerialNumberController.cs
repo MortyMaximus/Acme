@@ -15,6 +15,7 @@ namespace Acme.Web.Controllers
             _serialNumberLogic = serialNumberLogic;
         }
 
+#if(DEBUG)
         /// <summary>
         /// Creates a 100 new valid serial numbers for usage.
         /// </summary>
@@ -50,4 +51,5 @@ namespace Acme.Web.Controllers
             }
         }
     }
+#endif
 }

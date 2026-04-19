@@ -4,7 +4,6 @@ using Acme.Repository;
 using Acme.Repository.Models;
 using Acme.Web.Components;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 public partial class Program
 {
